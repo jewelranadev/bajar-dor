@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ChevronDown, UserRound, LogIn, UserPlus, LogOut } from "lucide-react";
 
+
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -129,6 +130,7 @@ const Header = () => {
                   লগ আউট
                 </button>
               </div>
+              
             </>
           )}
         </div>
