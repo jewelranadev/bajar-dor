@@ -1,0 +1,115 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+const API_URL = "https://api.abcz.workers.dev/api/bazardor/products";
+
+export default function PriceSection({ type }) {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const isIncreased = type === "increased";
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(API_URL);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const filteredProducts = products.filter((product) =>
+    isIncreased
+      ? product.change?.dir === "up"
+      : product.change?.dir === "down"
+  ).slice(0, 6);
+
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-6">
+      <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-[#1f2922]">
+        <span
+          className={isIncreased ? "text-red-500" : "text-green-600"}
+        >
+          {isIncreased ? "▲" : "▼"}
+        </span>
+
+        {isIncreased ? "আজ দাম বেড়েছে" : "আজ দাম কমেছে"}
+      </h2>
+
+      {loading ? (
+        <p className="text-sm text-gray-500">
+          পণ্যের তথ্য লোড হচ্ছে...
+        </p>
+      ) : filteredProducts.length === 0 ? (
+        <p className="text-sm text-gray-500">
+          কোনো পণ্যের তথ্য পাওয়া যায়নি।
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredProducts.map((product) => (
+            <div
+              key={product.id}
+              className="rounded-xl border border-gray-200 bg-[#fbfdfb] p-3 transition hover:shadow-md"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#f0f5ef] text-2xl">
+                  {product.image || "🥬"}
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-[#1f2922]">
+                    {product.nameBn}
+                  </h3>
+
+                  <p className="text-xs text-gray-500">
+                    প্রতি {product.unit === "kg"
+                      ? "কেজি"
+                      : product.unit === "litre"
+                        ? "লিটার"
+                        : product.unit}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-3 flex items-end justify-between">
+                <div>
+                  <p className="text-xs text-gray-500">
+                    আজকের দাম
+                  </p>
+
+                  <p className="font-bold text-[#1f2922]">
+                    {product.today} টাকা
+                  </p>
+                </div>
+
+                <span
+                  className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                    isIncreased
+                      ? "bg-red-50 text-red-600"
+                      : "bg-green-50 text-green-600"
+                  }`}
+                >
+                  {isIncreased ? "▲" : "▼"}{" "}
+                  {Math.abs(product.change?.pct ?? 0)}%
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
