@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
 import NavLinks from "./components/NavLinks";
+import Marquee from "react-fast-marquee";
 
 
 const geistSans = Geist({
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
         
         <Header />
         <NavLinks />
+        <Marquee />
 
         {children}
         
