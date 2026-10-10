@@ -2,21 +2,86 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, UserRound } from "lucide-react";
-
+import {
+  useSession,
+  signOut,
+  authClient,
+} from "@/lib/auth-client";
 export default function ProfilePage() {
-  const [name, setName] = useState("Rezwan Ahmed");
-  const [newName, setNewName] = useState("Rezwan Ahmed");
+  const { data: session, isPending } = useSession();
 
-  const handleUpdate = (e) => {
+  const [newName, setNewName] = useState("");
+  const [updating, setUpdating] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const user = session?.user;
+
+  useEffect(() => {
+    if (user?.name) {
+      setNewName(user.name);
+    }
+  }, [user?.name]);
+
+  const handleUpdate = async (e) => {
     e.preventDefault();
 
-    if (!newName.trim()) {
-      return;
-    }
+    const name = newName.trim();
 
-    setName(newName.trim());
+    if (!name || !user) return;
+
+    setUpdating(true);
+    setMessage("");
+
+    try {
+      const { error } = await authClient.updateUser({ name });
+
+      if (error) {
+        setMessage(error.message || "নাম আপডেট করা যায়নি।");
+        return;
+      }
+
+      setMessage("আপনার নাম সফলভাবে আপডেট হয়েছে।");
+    } catch {
+      setMessage("কোনো সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  if (isPending) {
+    return (
+      <main className="flex min-h-[calc(100vh-140px)] items-center justify-center bg-[#f0f5f0]">
+        <p className="text-sm text-gray-500">প্রোফাইল লোড হচ্ছে...</p>
+      </main>
+    );
+  }
+
+  if (!user) {
+    return (
+      <main className="flex min-h-[calc(100vh-140px)] flex-col items-center justify-center bg-[#f0f5f0] px-4">
+        <h1 className="text-xl font-bold text-[#1f2922]">
+          লগইন করা প্রয়োজন
+        </h1>
+
+        <p className="mt-2 text-sm text-gray-500">
+          প্রোফাইল দেখতে প্রথমে সাইন ইন করুন।
+        </p>
+
+        <Link
+          href="/signin"
+          className="mt-5 rounded-lg bg-green-700 px-5 py-3 text-sm font-semibold text-white hover:bg-green-800"
+        >
+          সাইন ইন
+        </Link>
+      </main>
+    );
+  }
+
+  const handleSignOut = async () => {
+    await signOut();
+    window.location.href = "/signin";
   };
 
   return (
@@ -37,33 +102,38 @@ export default function ProfilePage() {
         <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-[#fbfdfb] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
           <div className="flex items-center gap-3">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gray-100">
-              <Image
-                src="/profile.png"
-                alt="Profile"
-                width={56}
-                height={56}
-                className="h-full w-full object-cover"
-              />
+              {user.image ? (
+                <Image
+                  src={user.image}
+                  alt={user.name || "Profile"}
+                  width={56}
+                  height={56}
+                  className="h-full w-full object-cover"
+                  unoptimized
+                />
+              ) : (
+                <UserRound size={28} className="text-gray-500" />
+              )}
             </div>
 
             <div className="min-w-0">
               <h2 className="font-semibold text-[#1f2922]">
-                {name}
+                {user.name || "নাম দেওয়া হয়নি"}
               </h2>
 
               <p className="break-all text-sm text-gray-500">
-                rezwanahmed@gmail.com
+                {user.email}
               </p>
             </div>
           </div>
 
-          <Link
-            href="/signin"
+          <button
+            onClick={handleSignOut}
             className="inline-flex shrink-0 items-center justify-center gap-1 self-start rounded-lg border border-red-400 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 sm:self-center"
           >
             <ArrowLeft size={15} />
             সাইন আউট
-          </Link>
+          </button>
         </div>
 
         {/* Update Information */}
@@ -96,11 +166,18 @@ export default function ProfilePage() {
               />
             </div>
 
+            {message && (
+              <p className="mt-3 text-sm text-gray-600" role="status">
+                {message}
+              </p>
+            )}
+
             <button
               type="submit"
-              className="mt-3 w-full rounded-lg bg-green-700 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800"
+              disabled={updating}
+              className="mt-3 w-full rounded-lg bg-green-700 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              আপডেট
+              {updating ? "আপডেট হচ্ছে..." : "আপডেট"}
             </button>
           </form>
         </div>

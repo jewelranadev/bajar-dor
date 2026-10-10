@@ -2,10 +2,10 @@ import { notFound } from "next/navigation";
 import CategoryProducts from "../../components/CategoryProducts";
 
 const CATEGORIES_API =
-  "https://api.abcz.workers.dev/api/bazardor/categories";
+  "https://openapi.programming-hero.com/api/bazardor/categories";
 
 const PRODUCTS_API =
-  "https://api.abcz.workers.dev/api/bazardor/products";
+  "https://openapi.programming-hero.com/api/bazardor/products";
 
 async function getData(url) {
   const response = await fetch(url, {
