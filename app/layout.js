@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
@@ -27,16 +28,20 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        
         <Header />
         <NavLinks />
-        <Marquee />
+
+        {/* Marquee প্রতি রিকোয়েস্টে ডেটা আনে, তাই Suspense লাগে */}
+        <Suspense
+          fallback={<div className="h-10 border-b border-gray-200 bg-[#f8faf8]" />}
+        >
+          <Marquee />
+        </Suspense>
 
         {children}
 
         <Footer />
-        
-        </body>
+      </body>
     </html>
   );
 }
