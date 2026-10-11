@@ -5,7 +5,7 @@ const nextConfig = {
     agentFeedback: true,
   },
   cacheComponents: false,
-  partialPrefetching: true,
+  partialPrefetching: false,
   reactCompiler: true,
   turbopack: {
     rules: {
