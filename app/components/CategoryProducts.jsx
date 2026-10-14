@@ -3,6 +3,15 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+const UNIT_LABELS = {
+  kg: "কেজি",
+  kilogram: "কেজি",
+  litre: "লিটার",
+  liter: "লিটার",
+  dozen: "ডজন",
+  piece: "পিস",
+};
+
 export default function CategoryProducts({ products, loading = false }) {
   const [sortBy, setSortBy] = useState("default");
 
@@ -86,8 +95,8 @@ export default function CategoryProducts({ products, loading = false }) {
               return (
                 <Link
                   key={product.id}
-                  href={`/product/${product.id}`}
-                  className="block rounded-xl border border-gray-200 bg-[#fbfdfb] p-3 transition hover:shadow-md"
+                  href={`/product/${product.slug}`}
+                  className="group block rounded-xl border border-gray-200 bg-[#fbfdfb] p-3 transition duration-200 hover:-translate-y-1 hover:border-green-300 hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#f0f5ef] text-2xl">
@@ -95,26 +104,21 @@ export default function CategoryProducts({ products, loading = false }) {
                     </div>
 
                     <div>
-                      <h2 className="font-semibold text-[#1f2922]">
+                      <h2 className="font-semibold text-[#1f2922] transition group-hover:text-green-700">
                         {product.nameBn}
                       </h2>
 
                       <p className="text-xs text-gray-500">
-                        প্রতি{" "}
-                        {product.unit === "kg"
-                          ? "কেজি"
-                          : product.unit === "litre"
-                            ? "লিটার"
-                            : product.unit}
+                        <p className="text-xs text-gray-500">
+                          প্রতি {UNIT_LABELS[product.unit] || product.unit}
+                        </p>
                       </p>
                     </div>
                   </div>
 
                   <div className="mt-3 flex items-end justify-between">
                     <div>
-                      <p className="text-xs text-gray-500">
-                        আজকের দাম
-                      </p>
+                      <p className="text-xs text-gray-500">আজকের দাম</p>
 
                       <p className="font-bold text-[#1f2922]">
                         {product.today} টাকা
@@ -137,6 +141,7 @@ export default function CategoryProducts({ products, loading = false }) {
                 </Link>
               );
             })}
+            
           </div>
         </>
       )}

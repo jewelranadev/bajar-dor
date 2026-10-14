@@ -66,7 +66,7 @@ export default function PriceSection({ type }) {
           {filteredProducts.map((product) => (
             <Link
               key={product.id}
-              href={`/product/${product.id}`}
+              href={`/product/${product.slug}`}
               className="group block rounded-xl border border-[#E1E9E1] bg-[#FAFCFA] p-3 transition duration-200 hover:-translate-y-1 hover:border-green-300 hover:shadow-md"
             >
               {/* Product Information */}

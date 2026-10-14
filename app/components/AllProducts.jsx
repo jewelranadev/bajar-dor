@@ -40,11 +40,9 @@ export default function AllProducts() {
   }, []);
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-8">
+    <section id="সব-পণ্য" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-8">
       <div className="mb-5">
-        <h2 className="text-xl font-bold text-[#1f2922]">
-          সব পণ্য
-        </h2>
+        <h2 className="text-xl font-bold text-[#1f2922]">সব পণ্য</h2>
 
         <p className="mt-1 text-sm text-gray-500">
           মোট {products.length}টি পণ্যের দাম দেখানো হচ্ছে
@@ -60,7 +58,7 @@ export default function AllProducts() {
           কোনো পণ্যের তথ্য পাওয়া যায়নি।
         </p>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => {
             const direction = product.change?.dir;
             const percentage = Number(product.change?.pct ?? 0);
@@ -101,26 +99,28 @@ export default function AllProducts() {
 
                 <div className="mt-5 flex items-end justify-between gap-3">
                   <div>
-                    <p className="text-xs text-gray-500">
-                      আজকের দাম
-                    </p>
+                    <p className="text-xs text-gray-500">আজকের দাম</p>
 
                     <p className="mt-1 text-lg font-bold text-[#1f2922]">
-                      ৳{product.today}
+                      {Number(product.today).toLocaleString("bn-BD")} টাকা
                     </p>
                   </div>
 
                   <span
                     className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
                       isUp
-                        ? "bg-red-50 text-red-600"
+                        ? "bg-green-50 text-green-600"
                         : isDown
-                          ? "bg-green-50 text-green-600"
+                          ? "bg-red-50 text-red-600"
                           : "bg-gray-100 text-gray-500"
                     }`}
                   >
                     {isUp ? "▲" : isDown ? "▼" : "—"}{" "}
-                    {Math.abs(percentage).toFixed(1)}%
+                    {Math.abs(percentage).toLocaleString("bn-BD", {
+                      minimumFractionDigits: 1,
+                      maximumFractionDigits: 1,
+                    })}
+                    %
                   </span>
                 </div>
 

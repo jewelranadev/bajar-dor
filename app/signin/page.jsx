@@ -29,7 +29,7 @@ export default function SigninPage() {
         return;
       }
 
-      router.push("/profile");
+      router.push("/");
       router.refresh();
     } catch {
       setError("কোনো সমস্যা হয়েছে। আবার চেষ্টা করুন।");
@@ -44,9 +44,7 @@ export default function SigninPage() {
         onSubmit={handleSignin}
         className="card w-full max-w-md bg-base-100 p-8 shadow-xl"
       >
-        <h1 className="mb-2 text-center text-3xl font-bold">
-          Sign In
-        </h1>
+        <h1 className="mb-2 text-center text-3xl font-bold">Sign In</h1>
 
         <p className="mb-6 text-center text-base-content/60">
           আপনার অ্যাকাউন্টে প্রবেশ করুন
@@ -84,6 +82,27 @@ export default function SigninPage() {
           disabled={loading}
         >
           {loading ? "Signing In..." : "Sign In"}
+        </button>
+
+        <div className="divider">অথবা</div>
+
+        <button
+          type="button"
+          className="btn btn-outline w-full"
+          onClick={async () => {
+            setError("");
+
+            try {
+              await authClient.signIn.social({
+                provider: "google",
+                callbackURL: "/",
+              });
+            } catch {
+              setError("Google দিয়ে সাইন ইন করা যায়নি। আবার চেষ্টা করুন।");
+            }
+          }}
+        >
+          Google দিয়ে Sign In
         </button>
 
         <p className="mt-5 text-center text-sm">
