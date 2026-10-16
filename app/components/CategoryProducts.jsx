@@ -109,9 +109,7 @@ export default function CategoryProducts({ products, loading = false }) {
                       </h2>
 
                       <p className="text-xs text-gray-500">
-                        <p className="text-xs text-gray-500">
-                          প্রতি {UNIT_LABELS[product.unit] || product.unit}
-                        </p>
+                        প্রতি {UNIT_LABELS[product.unit] || product.unit}
                       </p>
                     </div>
                   </div>
@@ -141,7 +139,6 @@ export default function CategoryProducts({ products, loading = false }) {
                 </Link>
               );
             })}
-            
           </div>
         </>
       )}

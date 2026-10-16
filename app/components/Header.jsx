@@ -3,18 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import {
-  UserRound,
-  LogIn,
-  UserPlus,
-  LogOut,
-  ChevronDown,
-} from "lucide-react";
+import { LogIn, UserPlus, LogOut } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 
 const Header = () => {
   const [date, setDate] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
 
   const { data: session, isPending } = useSession();
 
@@ -37,8 +30,6 @@ const Header = () => {
   }, []);
 
   const handleSignOut = async () => {
-    setIsOpen(false);
-
     try {
       await signOut();
       window.location.href = "/signin";
@@ -73,15 +64,14 @@ const Header = () => {
         </Link>
 
         {/* Right: Authentication */}
-        <div className="relative flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           {isPending ? (
-            <span className="loading loading-spinner loading-sm text-green-700" />
+            <span className="h-5 w-5 animate-spin rounded-full border-2 border-green-700 border-t-transparent" />
           ) : user ? (
             <>
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                aria-expanded={isOpen}
-                aria-label="Profile menu"
+              <Link
+                href="/profile"
+                aria-label="আমার প্রোফাইল"
                 className="flex items-center gap-2 rounded-full border border-gray-200 p-1.5 transition hover:bg-green-50 sm:px-3"
               >
                 <Image
@@ -96,52 +86,15 @@ const Header = () => {
                 <span className="hidden max-w-28 truncate text-sm font-semibold text-gray-700 sm:block">
                   {user.name}
                 </span>
+              </Link>
 
-                <ChevronDown
-                  size={15}
-                  className={`hidden text-gray-500 transition-transform sm:block ${
-                    isOpen ? "rotate-180" : ""
-                  }`}
-                />
+              <button
+                onClick={handleSignOut}
+                className="flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 sm:gap-2 sm:px-4 sm:text-sm"
+              >
+                <LogOut size={16} />
+                লগ আউট
               </button>
-
-              {isOpen && (
-                <>
-                  <button
-                    aria-label="Close profile menu"
-                    className="fixed inset-0 z-10 cursor-default"
-                    onClick={() => setIsOpen(false)}
-                  />
-
-                  <div className="absolute right-0 top-full z-20 mt-3 w-52 overflow-hidden rounded-xl border border-gray-200 bg-white py-2 shadow-xl">
-                    <div className="border-b border-gray-100 px-4 py-3">
-                      <p className="truncate font-semibold text-gray-800">
-                        {user.name}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        আপনার অ্যাকাউন্ট
-                      </p>
-                    </div>
-
-                    <Link
-                      href="/profile"
-                      onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-green-50"
-                    >
-                      <UserRound size={17} />
-                      আমার প্রোফাইল
-                    </Link>
-
-                    <button
-                      onClick={handleSignOut}
-                      className="flex w-full items-center gap-3 border-t border-gray-100 px-4 py-3 text-sm text-red-600 hover:bg-red-50"
-                    >
-                      <LogOut size={17} />
-                      লগ আউট
-                    </button>
-                  </div>
-                </>
-              )}
             </>
           ) : (
             <>
