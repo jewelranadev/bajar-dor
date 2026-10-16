@@ -7,6 +7,8 @@ import Marquee from "./components/Marquee";
 import Footer from "./components/Footer";
 import { Toaster } from "react-hot-toast";
 
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -40,6 +42,7 @@ export default function RootLayout({ children }) {
         </Suspense>
 
         {children}
+        <Toaster position="top-center" />
 
         <Footer />
       </body>

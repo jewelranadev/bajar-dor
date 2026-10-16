@@ -3,10 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { LogIn, UserPlus, LogOut } from "lucide-react";
+import toast from "react-hot-toast";
 import { useSession, signOut } from "@/lib/auth-client";
 
 const Header = () => {
+  const router = useRouter();
   const [date, setDate] = useState("");
 
   const { data: session, isPending } = useSession();
@@ -32,17 +35,18 @@ const Header = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
-      window.location.href = "/signin";
+      toast.success("লগ আউট হয়েছে।");
+      router.push("/signin");
+      router.refresh();
     } catch (error) {
       console.error("Sign out failed:", error);
+      toast.error("লগ আউট করা যায়নি।");
     }
   };
 
   return (
     <header className="relative z-50 border-b border-gray-200 bg-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
-
-        {/* Left: Logo + Date */}
         <Link href="/" className="flex shrink-0 items-center gap-2.5">
           <Image
             src="/logo-icon.png"
@@ -56,14 +60,12 @@ const Header = () => {
             <h1 className="text-lg font-extrabold tracking-tight text-green-800 sm:text-2xl">
               বাজার দর
             </h1>
-
             <p className="mt-0.5 text-[10px] text-gray-500 sm:text-xs">
               {date || "আজকের বাজারদর"}
             </p>
           </div>
         </Link>
 
-        {/* Right: Authentication */}
         <div className="flex shrink-0 items-center gap-2">
           {isPending ? (
             <span className="h-5 w-5 animate-spin rounded-full border-2 border-green-700 border-t-transparent" />
@@ -82,7 +84,6 @@ const Header = () => {
                   className="h-8 w-8 rounded-full object-cover"
                   unoptimized
                 />
-
                 <span className="hidden max-w-28 truncate text-sm font-semibold text-gray-700 sm:block">
                   {user.name}
                 </span>

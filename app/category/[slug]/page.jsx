@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import CategoryProducts from "../../components/CategoryProducts";
 
+
 const CATEGORIES_API =
   "https://openapi.programming-hero.com/api/bazardor/categories";
 

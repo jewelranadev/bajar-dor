@@ -37,7 +37,7 @@ export default function PriceSection({ type }) {
     .filter((product) =>
       isIncreased
         ? product.change?.dir === "up"
-        : product.change?.dir === "down"
+        : product.change?.dir === "down",
     )
     .slice(0, 6);
 
@@ -54,13 +54,25 @@ export default function PriceSection({ type }) {
 
       {/* Loading */}
       {loading ? (
-        <p className="text-sm text-gray-500">
-          পণ্যের তথ্য লোড হচ্ছে...
-        </p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="animate-pulse rounded-xl border border-[#E1E9E1] bg-[#FAFCFA] p-3"
+            >
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-gray-200" />
+                <div className="space-y-2">
+                  <div className="h-4 w-24 rounded bg-gray-200" />
+                  <div className="h-3 w-16 rounded bg-gray-200" />
+                </div>
+              </div>
+              <div className="mt-4 h-5 w-20 rounded bg-gray-200" />
+            </div>
+          ))}
+        </div>
       ) : filteredProducts.length === 0 ? (
-        <p className="text-sm text-gray-500">
-          কোনো পণ্যের তথ্য পাওয়া যায়নি।
-        </p>
+        <p className="text-sm text-gray-500">কোনো পণ্যের তথ্য পাওয়া যায়নি।</p>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProducts.map((product) => (
@@ -82,11 +94,9 @@ export default function PriceSection({ type }) {
 
                   <p className="text-xs text-gray-500">
                     প্রতি{" "}
-                    {product.unit === "kg" ||
-                    product.unit === "kilogram"
+                    {product.unit === "kg" || product.unit === "kilogram"
                       ? "কেজি"
-                      : product.unit === "litre" ||
-                          product.unit === "liter"
+                      : product.unit === "litre" || product.unit === "liter"
                         ? "লিটার"
                         : product.unit || "একক"}
                   </p>
@@ -96,9 +106,7 @@ export default function PriceSection({ type }) {
               {/* Price and Percentage */}
               <div className="mt-3 flex items-end justify-between">
                 <div>
-                  <p className="text-xs text-gray-500">
-                    আজকের দাম
-                  </p>
+                  <p className="text-xs text-gray-500">আজকের দাম</p>
 
                   <p className="font-bold text-[#1f2922]">
                     {product.today ?? "—"} টাকা
