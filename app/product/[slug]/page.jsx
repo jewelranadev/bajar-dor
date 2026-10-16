@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import ProductSummary from "@/components/ProductSummary";
+import ProductSummary from "../../components/ProductSummary";
 import { auth } from "@/lib/auth";
 import { getProductBySlug } from "@/lib/products";
 

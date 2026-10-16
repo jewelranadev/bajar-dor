@@ -4,6 +4,7 @@ import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -13,11 +14,24 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
+  const [socialLoading, setSocialLoading] = useState("");
+
+  const busy = loading || socialLoading !== "";
+
+  const showError = (message) => {
+    setError(message);
+    toast.error(message);
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (password.length < 8) {
+      showError("পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -28,35 +42,36 @@ export default function SignupPage() {
       });
 
       if (result.error) {
-        setError(result.error.message || "অ্যাকাউন্ট তৈরি করা যায়নি।");
+        showError(result.error.message || "অ্যাকাউন্ট তৈরি করা যায়নি।");
         return;
       }
 
+      toast.success("অ্যাকাউন্ট তৈরি হয়েছে। এখন সাইন ইন করুন।");
       router.push("/signin");
     } catch {
-      setError("সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+      showError("সমস্যা হয়েছে। আবার চেষ্টা করুন।");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSignup = async () => {
+  const handleSocialSignup = async (provider, label) => {
     setError("");
-    setGoogleLoading(true);
+    setSocialLoading(provider);
 
     try {
       const result = await authClient.signIn.social({
-        provider: "google",
+        provider,
         callbackURL: "/",
       });
 
       if (result?.error) {
-        setError(result.error.message || "Google দিয়ে সাইন আপ করা যায়নি।");
-        setGoogleLoading(false);
+        showError(result.error.message || `${label} দিয়ে সাইন আপ করা যায়নি।`);
+        setSocialLoading("");
       }
     } catch {
-      setError("Google দিয়ে সাইন আপ করা যায়নি। আবার চেষ্টা করুন।");
-      setGoogleLoading(false);
+      showError(`${label} দিয়ে সাইন আপ করা যায়নি। আবার চেষ্টা করুন।`);
+      setSocialLoading("");
     }
   };
 
@@ -127,24 +142,35 @@ export default function SignupPage() {
           </p>
         )}
 
-        <button
-          type="submit"
-          className="btn btn-primary w-full"
-          disabled={loading || googleLoading}
-        >
+        <button type="submit" className="btn btn-primary w-full" disabled={busy}>
           {loading ? "Creating Account..." : "Sign Up"}
         </button>
 
         <div className="divider">অথবা</div>
 
-        <button
-          type="button"
-          className="btn btn-outline w-full"
-          onClick={handleGoogleSignup}
-          disabled={loading || googleLoading}
-        >
-          {googleLoading ? "Connecting to Google..." : "Google দিয়ে Sign Up"}
-        </button>
+        <div className="flex flex-col gap-3">
+          <button
+            type="button"
+            className="btn btn-outline w-full"
+            onClick={() => handleSocialSignup("google", "Google")}
+            disabled={busy}
+          >
+            {socialLoading === "google"
+              ? "Connecting to Google..."
+              : "Google দিয়ে Sign Up"}
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-outline w-full"
+            onClick={() => handleSocialSignup("github", "GitHub")}
+            disabled={busy}
+          >
+            {socialLoading === "github"
+              ? "Connecting to GitHub..."
+              : "GitHub দিয়ে Sign Up"}
+          </button>
+        </div>
 
         <p className="mt-6 text-center text-sm">
           ইতিমধ্যে অ্যাকাউন্ট আছে?{" "}
