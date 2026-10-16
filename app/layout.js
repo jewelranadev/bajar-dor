@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import NavLinks from "./components/NavLinks";
 import Marquee from "./components/Marquee";
 import Footer from "./components/Footer";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
