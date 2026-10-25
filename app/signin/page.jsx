@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,7 @@ import AuthToast from "@/app/components/AuthToast";
 
 export default function SigninPage() {
   const router = useRouter();
+  const { data: session, isPending } = authClient.useSession();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,6 +18,12 @@ export default function SigninPage() {
   const [socialLoading, setSocialLoading] = useState("");
 
   const busy = loading || socialLoading !== "";
+
+  useEffect(() => {
+    if (!isPending && session) {
+      router.replace("/");
+    }
+  }, [session, isPending, router]);
 
   const showError = (message) => {
     setError(message);
@@ -68,6 +75,10 @@ export default function SigninPage() {
       setSocialLoading("");
     }
   };
+
+  if (isPending || session) {
+    return null;
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-base-200 px-4">
